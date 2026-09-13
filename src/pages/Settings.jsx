@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Globe, Bot, User, RotateCcw, Trash2, Info, Trophy, Wand2, RefreshCw, Server } from "lucide-react";
+import { Globe, Bot, User, RotateCcw, Trash2, Info, Trophy, Wand2, RefreshCw, Server, LogOut } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import AchievementCard, { ACHIEVEMENT_DEFS } from "../components/AchievementCard";
 import { getBackendStatus } from "../services/assistantService";
@@ -10,8 +10,8 @@ function StatusDot({ up }) {
 }
 
 export default function Settings() {
-  const { user, data, lang, setLanguage, assistantMode, setAssistantMode, generateSample, clearData, showToast, t } = useApp();
-  const [confirmAction, setConfirmAction] = useState(null); // null | "sample" | "clear"
+  const { user, data, lang, setLanguage, assistantMode, setAssistantMode, generateSample, clearData, showToast, logout, t } = useApp();
+  const [confirmAction, setConfirmAction] = useState(null); // null | "sample" | "clear" | "logout"
   const [status, setStatus] = useState({ backendUp: null, geminiConfigured: null });
   const [checking, setChecking] = useState(false);
 
@@ -31,6 +31,9 @@ export default function Settings() {
     } else if (confirmAction === "clear") {
       clearData();
       showToast(lang === "ko" ? "모든 데이터가 삭제됐어요." : "All data cleared.");
+    } else if (confirmAction === "logout") {
+      logout();
+      return; // component is about to unmount — nothing left to reset
     }
     setConfirmAction(null);
   }
@@ -49,6 +52,19 @@ export default function Settings() {
         <div className="settings-row">
           <span>{t("email")}</span><span className="settings-value">{user?.email}</span>
         </div>
+        {confirmAction === "logout" ? (
+          <div className="logout-confirm-row">
+            <span>{lang === "ko" ? "로그아웃 하시겠어요?" : "Log out of Moneo?"}</span>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button className="btn-danger" onClick={handleConfirm}>{t("confirm")}</button>
+              <button className="btn-secondary" onClick={() => setConfirmAction(null)}>{t("cancel")}</button>
+            </div>
+          </div>
+        ) : (
+          <button className="btn-danger-outline btn-block settings-logout-btn" onClick={() => setConfirmAction("logout")}>
+            <LogOut size={15} /> {t("logout")}
+          </button>
+        )}
       </div>
 
       <div className="card">

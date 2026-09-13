@@ -17,6 +17,12 @@
 
 html, body, #root { height: 100%; margin: 0; }
 
+/* Prevents the small horizontal "slide"/rubber-band on mobile — some
+   fixed-position off-canvas panels (e.g. the Ask Anything thread sidebar)
+   can otherwise widen the document's scrollable area even while parked
+   off-screen. */
+html, body { overflow-x: hidden; width: 100%; }
+
 body {
   font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Pretendard', sans-serif;
   background: var(--bg);
@@ -212,6 +218,20 @@ button, input, select, textarea { font-family: inherit; }
 }
 
 .btn-block { width: 100%; justify-content: center; }
+
+.settings-logout-btn { margin-top: 14px; }
+
+.logout-confirm-row {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
 
 /* ---------- App shell ---------- */
 
@@ -1181,13 +1201,14 @@ button, input, select, textarea { font-family: inherit; }
   .ask-anything-page { height: calc(100vh - 140px); margin: -16px; }
   .chat-thread-sidebar {
     position: fixed;
-    top: 0; left: -280px; bottom: 0;
+    top: 0; left: 0; bottom: 0;
     width: 260px;
     z-index: 50;
-    transition: left 0.2s ease;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
     box-shadow: 4px 0 20px rgba(0,0,0,0.15);
   }
-  .chat-thread-sidebar.open { left: 0; }
+  .chat-thread-sidebar.open { transform: translateX(0); }
   .chat-mobile-toggle { display: flex; }
   .chat-messages { padding-top: 54px; }
   .chat-bubble { max-width: 85%; }

@@ -38,8 +38,14 @@ export function currentModel() {
 /**
  * Plain text-in, text-out call with an optional system instruction.
  * Used for chat and proactive insight.
+ *
+ * Pass `useSearch: true` to ground the reply in live Google Search
+ * results — this is what lets the model know the current date, recent
+ * news, prices, or anything else that changes after its training
+ * cutoff. When grounding is used, the resolved source URLs (if any)
+ * come back in `sources` alongside the text.
  */
-export async function generateText({ systemInstruction, prompt, maxOutputTokens = 500 }) {
+export async function generateText({ systemInstruction, prompt, maxOutputTokens = 500, useSearch = false }) {
   const genai = getClient();
   if (!genai) {
     const err = new Error("GEMINI_NOT_CONFIGURED");
@@ -47,6 +53,10 @@ export async function generateText({ systemInstruction, prompt, maxOutputTokens 
     throw err;
   }
 
+  // Thinking and Google Search grounding can't both eat into the same
+  // token/latency budget comfortably — when search is on we still turn
+  // "thinking" off (see comment below) but allow the call a little more
+  // headroom since grounded answers tend to cite sources and run longer.
   const response = await genai.models.generateContent({
     model: MODEL,
     contents: [{ role: "user", parts: [{ text: prompt }] }],
@@ -59,6 +69,7 @@ export async function generateText({ systemInstruction, prompt, maxOutputTokens 
       // truncated mid-sentence. We want fast, direct answers here, not
       // extended reasoning, so thinking is turned off.
       thinkingConfig: { thinkingBudget: 0 },
+      ...(useSearch ? { tools: [{ googleSearch: {} }] } : {}),
     },
   });
 
@@ -68,7 +79,17 @@ export async function generateText({ systemInstruction, prompt, maxOutputTokens 
     err.code = "GEMINI_EMPTY_RESPONSE";
     throw err;
   }
-  return text.trim();
+
+  if (!useSearch) return text.trim();
+
+  // Pull out the grounding sources Gemini actually used, if any, so the
+  // frontend can show "Sources" links under the reply.
+  const groundingChunks = response?.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+  const sources = groundingChunks
+    .map((c) => c?.web && { title: c.web.title, uri: c.web.uri })
+    .filter(Boolean);
+
+  return { text: text.trim(), sources };
 }
 
 /**
