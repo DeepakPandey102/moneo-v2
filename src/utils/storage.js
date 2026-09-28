@@ -9,7 +9,6 @@
 // only ever read or write their own row.
 
 import { supabase } from "./supabaseClient";
-import { generateDemoData } from "../data/demoData";
 
 function emptyUserData(settings) {
   return {
@@ -80,16 +79,6 @@ export async function saveUserData(userId, newData) {
     throw error;
   }
   return newData;
-}
-
-// Explicit, opt-in demo data tool (Settings > Demo Tools > "Generate
-// Sample Month"). Never called automatically.
-export async function generateSampleMonth(userId) {
-  const existing = await getUserData(userId);
-  const sample = generateDemoData();
-  const merged = { ...sample, settings: existing.settings || sample.settings };
-  await saveUserData(userId, merged);
-  return merged;
 }
 
 export async function clearUserData(userId) {

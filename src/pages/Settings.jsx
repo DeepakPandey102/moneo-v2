@@ -10,7 +10,7 @@ function StatusDot({ up }) {
 }
 
 export default function Settings() {
-  const { user, data, lang, setLanguage, assistantMode, setAssistantMode, generateSample, clearData, showToast, logout, t } = useApp();
+  const { user, data, lang, setLanguage, assistantMode, setAssistantMode, clearData, showToast, logout, t } = useApp();
   const [confirmAction, setConfirmAction] = useState(null); // null | "sample" | "clear" | "logout"
   const [status, setStatus] = useState({ backendUp: null, geminiConfigured: null });
   const [checking, setChecking] = useState(false);
@@ -29,12 +29,7 @@ export default function Settings() {
   // Waits for the save to actually finish before saying it worked (before,
   // "Sample month generated" showed instantly, even if it then failed).
   async function handleConfirm() {
-    if (confirmAction === "sample") {
-      setWorking(true);
-      const ok = await generateSample();
-      setWorking(false);
-      if (ok) showToast(lang === "ko" ? "샘플 데이터가 생성됐어요." : "Sample month generated.");
-    } else if (confirmAction === "clear") {
+    if (confirmAction === "clear") {
       setWorking(true);
       const ok = await clearData();
       setWorking(false);

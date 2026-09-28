@@ -13,7 +13,7 @@ export const TEAM = [
       en: "Leads the project and builds the core of Moneo: the backend server, the Gemini AI integration for receipt scanning and the assistant, and the secure Supabase database.",
       ko: "프로젝트를 이끌며 Moneo의 핵심을 개발했습니다: 백엔드 서버, 영수증 인식과 어시스턴트를 위한 Gemini AI 연동, 그리고 안전한 Supabase 데이터베이스.",
     },
-    github: "DeepakPandey102", // ← add the GitHub username here, e.g. "deepak-pandey"
+    github: "", // ← add the GitHub username here, e.g. "deepak-pandey"
     phone: "01025071918",
     email: "",
     instagram: "d3epak07",

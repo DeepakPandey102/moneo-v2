@@ -3,7 +3,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Home, ArrowLeftRight, Wallet, Target, Bot, ReceiptText, StickyNote, BarChart3,
-  Settings, Sparkles, Search, Bell, ChevronDown, LogOut, Globe, MoreHorizontal, AlertTriangle, CheckCircle2,
+  Settings, Sparkles, Bell, ChevronDown, LogOut, Globe, MoreHorizontal, AlertTriangle, CheckCircle2,
   ArrowRight, ShieldCheck,
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
@@ -12,9 +12,6 @@ import { warmUpBackend } from "../services/assistantService";
 import { categoryLabel } from "../data/categories";
 import Logo from "./Logo";
 import Toast from "./Toast";
-
-// Question-like searches go to the AI assistant, everything else searches transactions.
-const QUESTION_START = /^(can|how|what|why|should|is|am|do|does|when|where|which|who|얼마|왜|어떻게|뭐|언제|어디|할 수|해도)/i;
 
 export default function Layout() {
   const { user, data, lang, t, logout, setLanguage } = useApp();
@@ -36,7 +33,6 @@ export default function Layout() {
   ];
   const MOBILE_PRIMARY = ["/app/dashboard", "/app/transactions", "/app/assistant", "/app/budgets"];
 
-  const [query, setQuery] = useState("");
   const [bellOpen, setBellOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
@@ -68,15 +64,6 @@ export default function Layout() {
     if (item.matchSearch) return location.pathname === "/app/transactions" && location.search.includes(item.matchSearch);
     if (item.to === "/app/transactions") return location.pathname === item.to && !location.search.includes("source=ai");
     return location.pathname.startsWith(item.to);
-  }
-
-  function handleSearch(e) {
-    e.preventDefault();
-    const q = query.trim();
-    if (!q) return;
-    setQuery("");
-    if (q.endsWith("?") || QUESTION_START.test(q)) navigate(`/app/assistant?q=${encodeURIComponent(q)}`);
-    else navigate(`/app/transactions?q=${encodeURIComponent(q)}`);
   }
 
   const initial = user?.name?.[0]?.toUpperCase() || "U";
@@ -127,16 +114,6 @@ export default function Layout() {
       <div className="mo-main">
         <header className="mo-topbar">
           <div className="mo-topbar-logo"><Logo size={26} textSize={19} /></div>
-          <form className="mo-search" onSubmit={handleSearch} role="search" noValidate>
-            <Search size={16} />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={L("Search transactions, categories, or ask Moneo AI…", "거래, 카테고리를 검색하거나 Moneo AI에게 물어보세요…")}
-              aria-label={L("Search or ask", "검색 또는 질문")}
-            />
-            <kbd>Enter</kbd>
-          </form>
 
           <div className="mo-topbar-right">
             <div className="mo-pop-wrap" ref={bellRef}>

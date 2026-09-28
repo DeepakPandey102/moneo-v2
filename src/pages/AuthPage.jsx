@@ -308,12 +308,6 @@ export default function AuthPage({ initialMode = "login" }) {
           </motion.div>
         </div>
 
-        <div className="mo-explore">
-          <span>{L("Explore", "둘러보기")}</span>
-          {NAV.filter((n) => n.id !== "home").map((n) => (
-            <button key={n.id} type="button" onClick={() => goTo(n.id)}>{n.label} <ArrowRight size={13} /></button>
-          ))}
-        </div>
         </motion.div>
         ) : (
         <motion.div key={view} className="mo-view" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}>

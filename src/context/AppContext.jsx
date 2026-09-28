@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
 import { supabase } from "../utils/supabaseClient";
-import { getUserData, saveUserData, generateSampleMonth, clearUserData } from "../utils/storage";
+import { getUserData, saveUserData, clearUserData } from "../utils/storage";
 import { t as translate } from "../data/translations";
 import { todayLocal } from "../utils/dates";
 
@@ -368,19 +368,6 @@ export function AppProvider({ children }) {
     mutate((d) => ({ ...d, settings: { ...d.settings, assistantMode: mode } }));
   }, [mutate]);
 
-  const generateSample = useCallback(async () => {
-    if (!user) return;
-    try {
-      const fresh = await generateSampleMonth(user.id);
-      replaceData(fresh);
-      return true;
-    } catch (err) {
-      console.error("generateSample failed:", err);
-      showToast(lang === "ko" ? "샘플 데이터 생성에 실패했어요." : "Failed to generate sample data.", "error");
-      return false;
-    }
-  }, [user, lang, showToast, replaceData]);
-
   const clearData = useCallback(async () => {
     if (!user) return;
     try {
@@ -403,7 +390,7 @@ export function AppProvider({ children }) {
     addBudget, deleteBudget,
     addGoal, updateGoal, deleteGoal,
     addNote, updateNote, deleteNote,
-    unlockAchievement, setLanguage, setAssistantMode, generateSample, clearData,
+    unlockAchievement, setLanguage, setAssistantMode, clearData,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

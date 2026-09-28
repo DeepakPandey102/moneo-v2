@@ -110,3 +110,8 @@ in `backend/.env` (see `backend/.env.example`).
 - Error messages always follow the app language (browser validation popups, which
   used the computer's language, are replaced by Moneo's own messages).
 - Friendlier AI error messages; long names no longer overlap amounts; charts use ₩K/₩M labels.
+- Landing: removed the "Explore" chips under the hero (the top menu covers it).
+- App: removed the top search bar (it mixed searching with asking the AI).
+  Transactions keeps its own search box; the AI has its own pages.
+- Removed all sample-data code (Generate Sample Month and demoData.js), so an
+  account only ever contains what its user entered.
