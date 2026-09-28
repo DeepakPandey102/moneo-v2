@@ -1,0 +1,22 @@
+# One-click backend deploy on Render (https://render.com → New → Blueprint).
+# The frontend deploys separately on Vercel (see DEPLOY.md).
+services:
+  - type: web
+    name: moneo-backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: GEMINI_API_KEY
+        sync: false          # you paste this in the Render dashboard
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: ALLOWED_ORIGINS
+        sync: false          # e.g. https://moneo.vercel.app,http://localhost:5173
+      - key: APP_TIMEZONE
+        value: Asia/Seoul

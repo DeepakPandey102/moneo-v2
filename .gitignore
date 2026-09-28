@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+backend/node_modules/
+
+# builds
+dist/
+.vercel/
+
+# secrets — never commit real keys
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# logs / OS / editors
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
